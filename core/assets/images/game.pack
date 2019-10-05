@@ -1,0 +1,75 @@
+
+images1.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+Hero
+  rotate: false
+  xy: 2, 2
+  size: 640, 320
+  orig: 640, 320
+  offset: 0, 0
+  index: -1
+Tiger
+  rotate: false
+  xy: 644, 2
+  size: 240, 320
+  orig: 240, 320
+  offset: 0, 0
+  index: -1
+trees
+  rotate: false
+  xy: 2, 324
+  size: 400, 120
+  orig: 400, 120
+  offset: 0, 0
+  index: -1
+wanim
+  rotate: false
+  xy: 644, 324
+  size: 360, 120
+  orig: 360, 120
+  offset: 0, 0
+  index: -1
+Skeleton
+  rotate: false
+  xy: 404, 324
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+Reaper
+  rotate: false
+  xy: 404, 406
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+Knight
+  rotate: false
+  xy: 486, 324
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+Grass
+  rotate: false
+  xy: 486, 406
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+smButton
+  rotate: false
+  xy: 2, 446
+  size: 120, 32
+  orig: 120, 32
+  offset: 0, 0
+  index: -1
+monsterHp
+  rotate: false
+  xy: 2, 480
+  size: 60, 8
+  orig: 60, 8
+  offset: 0, 0
+  index: -1
