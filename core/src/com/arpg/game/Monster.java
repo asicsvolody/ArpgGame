@@ -1,19 +1,17 @@
 package com.arpg.game;
 import com.arpg.game.utils.Poolable;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Shape2D;
 import com.badlogic.gdx.math.Vector2;
 
 public class Monster extends Unit implements Poolable {
     private String title;
     private float aiTimer;
     private float aiTimerTo;
+
+    //HT
+    private boolean isFury = true;
 
     public String getTitle() {
         return title;
@@ -64,20 +62,35 @@ public class Monster extends Unit implements Poolable {
 
     @Override
     public void update(float dt) {
+
         aiTimer += dt;
         attackTime += dt;
 
-        if (damageTimer > 0.0f) {
+        if (damageTimer > 0.0f && !isFury) {
             damageTimer -= dt;
         }
+        if(damageTimer > 0.0f && isFury){
+            damageTimer -= dt/15;
+        }else {
+            isFury = false;
+        }
 
-        if (aiTimer > aiTimerTo) {
+
+        if (aiTimer > aiTimerTo && !isFury) {
             aiTimer = 0.0f;
             aiTimerTo = MathUtils.random(2.0f, 4.0f);
             direction = Direction.values()[MathUtils.random(0, 3)];
         }
 
-        tmp.set(position).add(direction.getX() * stats.getSpeed() * dt, direction.getY() * stats.getSpeed() * dt);
+
+        if(isFury) {
+            Vector2 vec = new Vector2(gs.getHero().position.x - this.position.x, gs.getHero().position.y - this.position.y).nor();
+            tmp.set(position).add(vec.x * stats.getSpeed() * dt, vec.y * stats.getSpeed() * dt);
+        }else{
+            tmp.set(position).add(direction.getX() * stats.getSpeed() * dt, direction.getY() * stats.getSpeed() * dt);
+
+        }
+
         if (gs.getMap().isCellPassable(tmp)) {
             position.set(tmp);
             walkTimer += dt;
@@ -97,4 +110,41 @@ public class Monster extends Unit implements Poolable {
             }
         }
     }
+
+    public void setFury(boolean fury) {
+        int pros = MathUtils.random(0, 5);
+        if(pros == 2){
+            isFury = fury;
+        }
+    }
+
+
+    //    public void takeDamage(Unit attacker, int amount, Color color) {
+//        stats.decreaseHp(amount);
+//        damageTimer = 1.0f;
+//        gs.getInfoController().setup(position.x, position.y + 30, "-" + amount, color);
+//        if (stats.getHp() <= 0) {
+//            int exp = BattleCalc.calculateExp(attacker, this);
+//            attacker.getStats().addExp(exp);
+//            gs.getInfoController().setup(attacker.getPosition().x, attacker.getPosition().y + 40, "exp +" + exp, Color.YELLOW);
+//        }
+//    }
+
+//    public void render(SpriteBatch batch, BitmapFont font) {
+//        if (damageTimer > 0.0f) {
+//            batch.setColor(1.0f, 1.0f - damageTimer, 1.0f - damageTimer, 1.0f);
+//        }
+//
+//        if(dangerous >= 0.0f){
+//            batch.setColor(1.0f, 1.0f - dangerous, 1.0f - dangerous, 1.0f);
+//        }
+//        batch.draw(getCurrentTexture(), position.x - 40, position.y - 20);
+//
+//        if (stats.getHp() < stats.getHpMax()) {
+//            batch.setColor(1.0f, 1.0f, 1.0f, 0.9f);
+//            batch.draw(hpTexture, position.x - 40, position.y + 40, 80 * ((float) stats.getHp() / stats.getHpMax()), 12);
+//        }
+//        batch.setColor(1.0f, 1.0f, 1.0f, 1.0f);
+//        font.draw(batch, "" + stats.getLevel(), position.x, position.y + 50);
+//    }
 }

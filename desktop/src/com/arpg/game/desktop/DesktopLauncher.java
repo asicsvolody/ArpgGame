@@ -1,5 +1,7 @@
 package com.arpg.game.desktop;
 
+import com.arpg.game.GameScreen;
+import com.arpg.game.utils.PathFindingGame;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.arpg.game.ArpgGame;

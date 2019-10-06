@@ -3,11 +3,8 @@ package com.arpg.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
 
 public class Hero extends Unit {
     public boolean isActive() {
@@ -81,6 +78,7 @@ public class Hero extends Unit {
                 Monster m = gs.getMonsterController().getActiveList().get(i);
                 if (m.getArea().contains(tmp)) {
                     m.takeDamage(this, BattleCalc.calculateDamage(this, m), Color.WHITE);
+                    m.setFury(true);
                     break;
                 }
             }

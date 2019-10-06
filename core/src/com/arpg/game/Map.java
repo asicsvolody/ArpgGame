@@ -74,4 +74,12 @@ public class Map {
         }
         return data[cellX][cellY] == BlockType.EMPTY;
     }
+
+    public int isCellPassable(int x, int y){
+        if(data[x][y] == BlockType.EMPTY)
+            return 1;
+        return -1;
+    }
+
+
 }
