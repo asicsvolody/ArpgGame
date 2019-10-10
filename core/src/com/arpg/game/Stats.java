@@ -82,16 +82,23 @@ public class Stats {
         hp = hpMax;
     }
 
-    public boolean addExp(int amount) {
-        exp += amount +1000;
+    public int restoreHp(int amount) {
+        int hp0 = hp;
+        hp += amount;
+        if (hp > hpMax) {
+            hp = hpMax;
+        }
+        return hp - hp0;
+    }
+
+    public void addExp(int amount) {
+        exp += amount;
         if (exp >= expTo[level - 1]) {
             exp = 0;
             level++;
             calculate();
             fillHp();
-            return true;
         }
-        return false;
     }
 
     public void calculate() {

@@ -1,17 +1,27 @@
 package com.arpg.game;
+
 import com.arpg.game.utils.Poolable;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Shape2D;
 import com.badlogic.gdx.math.Vector2;
 
 public class Monster extends Unit implements Poolable {
+    public enum State {
+        HUNT, IDLE, WALK
+    }
+
+    private State state;
+    private Unit target;
     private String title;
     private float aiTimer;
     private float aiTimerTo;
-
-    //HT
-    private boolean isFury = true;
 
     public String getTitle() {
         return title;
@@ -27,7 +37,6 @@ public class Monster extends Unit implements Poolable {
         this.stats = new Stats();
         this.weapon = new Weapon("Bite", 0.8f, 2, 5);
     }
-
 
     // ___title________,__base_att__,__base_def__,__base_hp__,__att_pl__,__def_pl__,__hp_pl__,__speed__
     public Monster(String line) {
@@ -62,42 +71,72 @@ public class Monster extends Unit implements Poolable {
 
     @Override
     public void update(float dt) {
-
         aiTimer += dt;
         attackTime += dt;
 
-        if (damageTimer > 0.0f && !isFury) {
+        if (damageTimer > 0.0f) {
             damageTimer -= dt;
         }
-        if(damageTimer > 0.0f && isFury){
-            damageTimer -= dt/15;
-        }else {
-            isFury = false;
-        }
 
-
-        if (aiTimer > aiTimerTo && !isFury) {
+        if (aiTimer > aiTimerTo) {
+            state = State.values()[MathUtils.random(1, 2)]; // IDLE or WALK
             aiTimer = 0.0f;
             aiTimerTo = MathUtils.random(2.0f, 4.0f);
+            if (state == State.IDLE) {
+                aiTimerTo /= 4.0f;
+            }
             direction = Direction.values()[MathUtils.random(0, 3)];
         }
 
+        if (state == State.HUNT) {
+            if (Math.abs(target.getPosition().x - this.position.x) > 30.0f) {
+                if (target.getPosition().x > this.position.x) {
+                    direction = Direction.RIGHT;
+                }
+                if (target.getPosition().x < this.position.x) {
+                    direction = Direction.LEFT;
+                }
+            }
+            if (Math.abs(target.getPosition().y - this.position.y) > 30.0f) {
+                if (target.getPosition().y > this.position.y) {
+                    direction = Direction.UP;
+                }
+                if (target.getPosition().y < this.position.y) {
+                    direction = Direction.DOWN;
+                }
+            }
+        }
 
-        if(isFury) {
-            Vector2 vec = new Vector2(gs.getHero().position.x - this.position.x, gs.getHero().position.y - this.position.y).nor();
-            tmp.set(position).add(vec.x * stats.getSpeed() * dt, vec.y * stats.getSpeed() * dt);
-        }else{
+        if (state != State.IDLE) {
             tmp.set(position).add(direction.getX() * stats.getSpeed() * dt, direction.getY() * stats.getSpeed() * dt);
+            if (gs.getMap().isCellPassable(tmp)) {
+                position.set(tmp);
+                walkTimer += dt;
+                area.setPosition(position);
+            }
 
+            tryToAttack();
         }
+    }
 
-        if (gs.getMap().isCellPassable(tmp)) {
-            position.set(tmp);
-            walkTimer += dt;
-            area.setPosition(position);
+    @Override
+    public void takeDamage(Unit attacker, int amount, Color color) {
+        super.takeDamage(attacker, amount, color);
+        if (MathUtils.random(0, 100) < 20) {
+            stateToHunt(attacker);
         }
+    }
 
-        tryToAttack();
+    public void stateToHunt(Unit target) {
+        this.state = State.HUNT;
+        this.target = target;
+        this.aiTimerTo = 15.0f;
+    }
+
+    @Override
+    public void render(SpriteBatch batch, BitmapFont font) {
+        super.render(batch, font);
+        font.draw(batch, state.name(), position.x + 20, position.y + 60);
     }
 
     public void tryToAttack() {
@@ -110,41 +149,4 @@ public class Monster extends Unit implements Poolable {
             }
         }
     }
-
-    public void setFury(boolean fury) {
-        int pros = MathUtils.random(0, 5);
-        if(pros == 2){
-            isFury = fury;
-        }
-    }
-
-
-    //    public void takeDamage(Unit attacker, int amount, Color color) {
-//        stats.decreaseHp(amount);
-//        damageTimer = 1.0f;
-//        gs.getInfoController().setup(position.x, position.y + 30, "-" + amount, color);
-//        if (stats.getHp() <= 0) {
-//            int exp = BattleCalc.calculateExp(attacker, this);
-//            attacker.getStats().addExp(exp);
-//            gs.getInfoController().setup(attacker.getPosition().x, attacker.getPosition().y + 40, "exp +" + exp, Color.YELLOW);
-//        }
-//    }
-
-//    public void render(SpriteBatch batch, BitmapFont font) {
-//        if (damageTimer > 0.0f) {
-//            batch.setColor(1.0f, 1.0f - damageTimer, 1.0f - damageTimer, 1.0f);
-//        }
-//
-//        if(dangerous >= 0.0f){
-//            batch.setColor(1.0f, 1.0f - dangerous, 1.0f - dangerous, 1.0f);
-//        }
-//        batch.draw(getCurrentTexture(), position.x - 40, position.y - 20);
-//
-//        if (stats.getHp() < stats.getHpMax()) {
-//            batch.setColor(1.0f, 1.0f, 1.0f, 0.9f);
-//            batch.draw(hpTexture, position.x - 40, position.y + 40, 80 * ((float) stats.getHp() / stats.getHpMax()), 12);
-//        }
-//        batch.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-//        font.draw(batch, "" + stats.getLevel(), position.x, position.y + 50);
-//    }
 }

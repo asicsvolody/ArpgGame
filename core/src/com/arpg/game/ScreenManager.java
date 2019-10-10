@@ -21,6 +21,7 @@ public class ScreenManager {
     private SpriteBatch batch;
     private LoadingScreen loadingScreen;
     private GameScreen gameScreen;
+    private MenuScreen menuScreen;
     private Screen targetScreen;
     private Viewport viewport;
     private Camera camera;
@@ -49,6 +50,7 @@ public class ScreenManager {
         this.viewport = new FillViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
         this.gameScreen = new GameScreen(batch);
         this.loadingScreen = new LoadingScreen(batch);
+        this.menuScreen = new MenuScreen(batch);
     }
 
     public void resize(int width, int height) {
@@ -74,6 +76,11 @@ public class ScreenManager {
             case GAME:
                 targetScreen = gameScreen;
                 Assets.getInstance().loadAssets(ScreenType.GAME);
+                break;
+            case MENU:
+                targetScreen = menuScreen;
+                Assets.getInstance().loadAssets(ScreenType.MENU);
+
                 break;
         }
     }

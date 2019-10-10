@@ -4,7 +4,6 @@ import com.arpg.game.utils.ObjectPool;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
 
 public class MonsterController extends ObjectPool<Monster> {
     private GameScreen gs;

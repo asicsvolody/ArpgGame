@@ -17,6 +17,13 @@ Tiger
   orig: 240, 320
   offset: 0, 0
   index: -1
+powerUps
+  rotate: false
+  xy: 886, 2
+  size: 240, 210
+  orig: 240, 210
+  offset: 0, 0
+  index: -1
 trees
   rotate: false
   xy: 2, 324
@@ -26,35 +33,14 @@ trees
   index: -1
 wanim
   rotate: false
-  xy: 644, 324
+  xy: 1128, 2
   size: 360, 120
   orig: 360, 120
   offset: 0, 0
   index: -1
-Skeleton
-  rotate: false
-  xy: 404, 324
-  size: 80, 80
-  orig: 80, 80
-  offset: 0, 0
-  index: -1
-Reaper
-  rotate: false
-  xy: 404, 406
-  size: 80, 80
-  orig: 80, 80
-  offset: 0, 0
-  index: -1
-Knight
-  rotate: false
-  xy: 486, 324
-  size: 80, 80
-  orig: 80, 80
-  offset: 0, 0
-  index: -1
 Grass
   rotate: false
-  xy: 486, 406
+  xy: 404, 324
   size: 80, 80
   orig: 80, 80
   offset: 0, 0

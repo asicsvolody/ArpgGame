@@ -3,15 +3,6 @@ package com.arpg.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Circle;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
-
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -19,7 +10,7 @@ import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
-public abstract class Unit implements MapElement{
+public abstract class Unit implements MapElement {
     protected GameScreen gs;
     protected TextureRegion[][] texture;
     protected TextureRegion hpTexture;
@@ -47,12 +38,10 @@ public abstract class Unit implements MapElement{
         return (int) (position.x / 80);
     }
 
-
     @Override
     public int getCellY() {
         return (int) (position.y / 80);
     }
-
 
     public Vector2 getPosition() {
         return position;
@@ -84,13 +73,13 @@ public abstract class Unit implements MapElement{
             int exp = BattleCalc.calculateExp(attacker, this);
             attacker.getStats().addExp(exp);
             gs.getInfoController().setup(attacker.getPosition().x, attacker.getPosition().y + 40, "exp +" + exp, Color.YELLOW);
+            gs.getPowerUpsController().setup(position.x, position.y, 1.2f, 2, stats.getLevel());
         }
     }
 
     public TextureRegion getCurrentTexture() {
         return texture[direction.getImageIndex()][(int) (walkTimer / timePerFrame) % texture[direction.getImageIndex()].length];
     }
-
 
     public void render(SpriteBatch batch, BitmapFont font) {
         if (damageTimer > 0.0f) {
@@ -107,4 +96,3 @@ public abstract class Unit implements MapElement{
 
     public abstract void update(float dt);
 }
-
