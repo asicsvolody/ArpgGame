@@ -1,10 +1,4 @@
-/**
- * Created by IntelliJ Idea.
- * User: Якимов В.Н.
- * E-mail: yakimovvn@bk.ru
- */
-
-package com.arpg.game;
+package com.arpg.game.armory;
 
 public class Potion implements Item {
     public enum Type {

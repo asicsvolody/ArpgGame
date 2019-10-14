@@ -1,8 +1,8 @@
-package com.arpg.game;
+package com.arpg.game.armory;
 
 public interface Item {
     enum Type {
-        POTION, WEAPON, ARMOR
+        POTION, GOLD, WEAPON, ARMOR
     }
 
     Type getItemType();

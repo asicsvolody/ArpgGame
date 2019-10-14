@@ -4,8 +4,11 @@
  * E-mail: yakimovvn@bk.ru
  */
 
-package com.arpg.game;
+package com.arpg.game.armory;
 
+import com.arpg.game.units.Hero;
+
+import com.arpg.game.units.Hero;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
@@ -55,8 +58,8 @@ public class Inventory {
         if (!(getCurrentItem() instanceof Weapon)) {
             return;
         }
-        Weapon tmp = hero.weapon;
-        hero.weapon = (Weapon) getCurrentItem();
+        Weapon tmp = hero.getWeapon();
+        hero.setWeapon((Weapon) getCurrentItem());
         items.set(selected, tmp);
     }
 

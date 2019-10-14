@@ -1,27 +1,30 @@
-package com.arpg.game;
+package com.arpg.game.units;
 
+import com.arpg.game.*;
+import com.arpg.game.armory.*;
+import com.arpg.game.map.Map;
+import com.arpg.game.utils.Direction;
+import com.arpg.utils.Assets;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
 
 public class Hero extends Unit {
     private int score;
     private Inventory inventory;
-    // private Sound soundSwordSwipe;
+    private Sound soundSwordSwipe;
 
     public boolean isActive() {
         return stats.getHp() > 0;
     }
 
-    public Hero(GameScreen gameScreen) {
-        super(gameScreen);
+    public Hero(GameController gameController) {
+        super(gameController);
         this.inventory = new Inventory(this);
         this.inventory.add(new Potion("HP Potion", Potion.Type.HP, 25));
         this.inventory.add(new Potion("HP Potion", Potion.Type.HP, 25));
@@ -29,11 +32,11 @@ public class Hero extends Unit {
         this.texture = new TextureRegion(Assets.getInstance().getAtlas().findRegion("Hero")).split(80, 80);
         do {
             this.position.set(MathUtils.random(0, Map.MAP_SIZE_X_PX), MathUtils.random(0, Map.MAP_SIZE_Y_PX));
-        } while (!gameScreen.getMap().isCellPassable(position));
+        } while (!gc.getMap().isCellPassable(position));
         this.area.setPosition(position);
         this.stats = new Stats(1, 1, 1, 20, 1, 1, 10, 320.0f);
-        this.weapon = new Weapon("Short Sword", 0.5f, 2, 6);
-        // this.soundSwordSwipe=Gdx.audio.newSound(Gdx.files.internal("sounds/swordSwipe.wav"));
+        this.weapon = new Weapon("Short Sword", Weapon.Type.MELEE,0.5f, 90.0f, 2, 6);
+        this.soundSwordSwipe = Gdx.audio.newSound(Gdx.files.internal("audio/swordSwipe.mp3"));
     }
 
     @Override
@@ -67,7 +70,7 @@ public class Hero extends Unit {
         if (btnPressed) {
             tmp.set(position);
             tmp.add(direction.getX() * stats.getSpeed() * speedMod * dt, direction.getY() * stats.getSpeed() * speedMod * dt);
-            if (gs.getMap().isCellPassable(tmp)) {
+            if (gc.getMap().isCellPassable(tmp)) {
                 walkTimer += dt * speedMod;
                 position.set(tmp);
                 area.setPosition(position);
@@ -88,7 +91,7 @@ public class Hero extends Unit {
                     Potion p = (Potion) item;
                     if (p.getType() == Potion.Type.HP) {
                         int restored = stats.restoreHp(p.getPower());
-                        gs.getInfoController().setup(position.x, position.y, "HP +" + restored, Color.GREEN);
+                        gc.getInfoController().setup(position.x, position.y, "HP +" + restored, Color.GREEN);
                     }
                 }
             }
@@ -102,6 +105,10 @@ public class Hero extends Unit {
         if (Gdx.input.isKeyPressed(Input.Keys.F)) {
             attack();
         }
+
+        if (Gdx.input.isKeyPressed(Input.Keys.G)) {
+            rangedAttack();
+        }
     }
 
     public void renderHUD(SpriteBatch batch, BitmapFont font) {
@@ -113,10 +120,10 @@ public class Hero extends Unit {
         switch (p.getType()) {
             case COINS:
                 int amount = MathUtils.random(1, 3);
-                gs.getInfoController().setup(position.x, position.y, "Coins +" + amount, Color.YELLOW);
+                gc.getInfoController().setup(position.x, position.y, "+" + amount + "G", Color.YELLOW);
                 inventory.addCoins(amount);
                 break;
-            case MEDKIT:
+            case POTION:
                 inventory.add(new Potion("HP Bottle", Potion.Type.HP, MathUtils.random(15, 25)));
                 break;
             case WEAPON:
@@ -130,25 +137,55 @@ public class Hero extends Unit {
                 if (maxDmg < minDmg) {
                     maxDmg = minDmg;
                 }
-                inventory.add(new Weapon("Sword", 0.5f, minDmg, maxDmg));
+                inventory.add(new Weapon("Sword", Weapon.Type.MELEE,0.5f, 90.0f, minDmg, maxDmg));
                 break;
         }
         p.deactivate();
     }
 
+    public void rangedAttack() {
+        if (attackTime > 1.0f) {
+            attackTime = 0.0f;
+            gc.getProjectileController().setup(this, position.x, position.y + 15, 400.0f, 0, 500.0f, direction.getAngle() + MathUtils.random(-10, 10));
+        }
+    }
+
     public void attack() {
         if (attackTime > weapon.getAttackPeriod()) {
             attackTime = 0.0f;
-            tmp.set(position).add(direction.getX() * 60, direction.getY() * 60);
-            gs.getEffectController().setup(tmp.x, tmp.y, 0);
-            // soundSwordSwipe.play();
-            for (int i = 0; i < gs.getMonsterController().getActiveList().size(); i++) {
-                Monster m = gs.getMonsterController().getActiveList().get(i);
-                if (m.getArea().contains(tmp)) {
-                    m.takeDamage(this, BattleCalc.calculateDamage(this, m), Color.WHITE);
-                    break;
+
+            Monster nearestMonster = null;
+            float minDist = Float.MAX_VALUE;
+            for (int i = 0; i < gc.getMonsterController().getActiveList().size(); i++) {
+                Monster m = gc.getMonsterController().getActiveList().get(i);
+                float dst = position.dst(m.getPosition());
+                if (dst < minDist && dst <= weapon.getAttackRange()) {
+                    if (direction == Direction.LEFT && position.x > m.getPosition().x ||
+                            direction == Direction.RIGHT && position.x < m.getPosition().x ||
+                            direction == Direction.UP && position.y < m.getPosition().y ||
+                            direction == Direction.DOWN && position.y > m.getPosition().y) {
+                        nearestMonster = m;
+                        minDist = dst;
+                    }
                 }
             }
+
+            if (nearestMonster != null) {
+                nearestMonster.takeDamage(this, BattleCalc.calculateDamage(this, nearestMonster), Color.WHITE);
+                gc.getEffectController().setup(nearestMonster.getPosition().x, nearestMonster.getPosition().y, 0);
+            } else {
+                tmp.set(position.x + direction.getX() * 60, position.y + direction.getY() * 60);
+                gc.getEffectController().setup(tmp.x, tmp.y, 0);
+            }
+            soundSwordSwipe.play();
         }
+    }
+
+    public void dispose() {
+        soundSwordSwipe.dispose();
+    }
+
+    public void setWeapon(Weapon weapon) {
+        this.weapon = weapon;
     }
 }

@@ -1,6 +1,5 @@
-package com.arpg.game;
+package com.arpg.game.utils;
 
-import com.arpg.game.utils.ObjectPool;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class EffectController extends ObjectPool<Effect> {

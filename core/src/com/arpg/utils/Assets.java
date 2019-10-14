@@ -1,5 +1,6 @@
-package com.arpg.game;
+package com.arpg.utils;
 
+import com.arpg.screens.ScreenManager;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
@@ -36,11 +37,11 @@ public class Assets {
         switch (type) {
             case MENU:
                 assetManager.load("images/game.pack", TextureAtlas.class);
-                createStandardFont(34);
+                createStandardFont(24);
                 break;
             case GAME:
                 assetManager.load("images/game.pack", TextureAtlas.class);
-                createStandardFont(24);
+                createStandardFont(20);
                 break;
         }
     }
@@ -50,7 +51,7 @@ public class Assets {
         assetManager.setLoader(FreeTypeFontGenerator.class, new FreeTypeFontGeneratorLoader(resolver));
         assetManager.setLoader(BitmapFont.class, ".ttf", new FreetypeFontLoader(resolver));
         FreetypeFontLoader.FreeTypeFontLoaderParameter fontParameter = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
-        fontParameter.fontFileName = "fonts/zorque.ttf";
+        fontParameter.fontFileName = "fonts/DancingSuperserif.ttf";
         fontParameter.fontParameters.size = size;
         fontParameter.fontParameters.color = Color.WHITE;
         fontParameter.fontParameters.borderWidth = 1;

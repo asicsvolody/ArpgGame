@@ -1,21 +1,31 @@
-package com.arpg.game;
+package com.arpg.game.armory;
 
 import com.badlogic.gdx.math.MathUtils;
 
 public class Weapon implements Item {
+    public enum Type {
+        MELEE, RANGED
+    }
+
+    private Type type;
     private String title;
     private float attackPeriod;
+    private float attackRange;
     private int minDamage;
     private int maxDamage;
 
+    public Type getType() {
+        return type;
+    }
+
     @Override
-    public Type getItemType() {
-        return Type.WEAPON;
+    public Item.Type getItemType() {
+        return Item.Type.WEAPON;
     }
 
     @Override
     public String getTitle() {
-        return title + " [" + minDamage + "-" + maxDamage + "]";
+        return title + " " + minDamage + "-" + maxDamage;
     }
 
     @Override
@@ -28,6 +38,10 @@ public class Weapon implements Item {
         return true;
     }
 
+    public float getAttackRange() {
+        return attackRange;
+    }
+
     public float getAttackPeriod() {
         return attackPeriod;
     }
@@ -36,9 +50,11 @@ public class Weapon implements Item {
         return MathUtils.random(minDamage, maxDamage);
     }
 
-    public Weapon(String title, float attackPeriod, int minDamage, int maxDamage) {
+    public Weapon(String title, Type type, float attackPeriod, float attackRange, int minDamage, int maxDamage) {
         this.title = title;
+        this.type = type;
         this.attackPeriod = attackPeriod;
+        this.attackRange = attackRange;
         this.minDamage = minDamage;
         this.maxDamage = maxDamage;
     }

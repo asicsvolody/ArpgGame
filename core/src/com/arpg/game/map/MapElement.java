@@ -1,4 +1,4 @@
-package com.arpg.game;
+package com.arpg.game.map;
 
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;

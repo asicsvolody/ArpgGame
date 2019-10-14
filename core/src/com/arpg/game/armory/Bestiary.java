@@ -1,5 +1,6 @@
-package com.arpg.game;
+package com.arpg.game.armory;
 
+import com.arpg.game.units.Monster;
 import com.badlogic.gdx.Gdx;
 
 import java.io.BufferedReader;

@@ -1,11 +1,12 @@
-package com.arpg.game;
+package com.arpg.screens;
 
+import com.arpg.ArpgGame;
+import com.arpg.utils.Assets;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.viewport.FillViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
+import com.badlogic.gdx.utils.viewport.*;
 
 public class ScreenManager {
     public enum ScreenType {
@@ -47,10 +48,10 @@ public class ScreenManager {
         this.game = game;
         this.batch = batch;
         this.camera = new OrthographicCamera(WORLD_WIDTH, WORLD_HEIGHT);
-        this.viewport = new FillViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
+        this.viewport = new FitViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
         this.gameScreen = new GameScreen(batch);
-        this.loadingScreen = new LoadingScreen(batch);
         this.menuScreen = new MenuScreen(batch);
+        this.loadingScreen = new LoadingScreen(batch);
     }
 
     public void resize(int width, int height) {
@@ -80,7 +81,6 @@ public class ScreenManager {
             case MENU:
                 targetScreen = menuScreen;
                 Assets.getInstance().loadAssets(ScreenType.MENU);
-
                 break;
         }
     }
@@ -89,4 +89,3 @@ public class ScreenManager {
         game.setScreen(targetScreen);
     }
 }
-

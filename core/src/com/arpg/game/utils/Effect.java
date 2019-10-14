@@ -1,6 +1,6 @@
-package com.arpg.game;
+package com.arpg.game.utils;
 
-import com.arpg.game.utils.Poolable;
+import com.arpg.utils.Assets;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 

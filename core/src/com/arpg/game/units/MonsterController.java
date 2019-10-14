@@ -1,20 +1,21 @@
-package com.arpg.game;
+package com.arpg.game.units;
 
+import com.arpg.game.GameController;
 import com.arpg.game.utils.ObjectPool;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 
 public class MonsterController extends ObjectPool<Monster> {
-    private GameScreen gs;
+    private GameController gc;
 
     @Override
     protected Monster newObject() {
-        return new Monster(gs);
+        return new Monster(gc);
     }
 
-    public MonsterController(GameScreen gs) {
-        this.gs = gs;
+    public MonsterController(GameController gc) {
+        this.gc = gc;
     }
 
     public void render(SpriteBatch batch, BitmapFont font) {
@@ -23,9 +24,11 @@ public class MonsterController extends ObjectPool<Monster> {
         }
     }
 
+    private String[] types = {"Tiger", "Bomber"};
+
     public void setup(int level) {
         int currentLevel = MathUtils.random(level, level + 2);
-        getActiveElement().setup(currentLevel, -1, -1, gs.getBestiary().getPatternFromTitle("Tiger"));
+        getActiveElement().setup(currentLevel, -1, -1, gc.getBestiary().getPatternFromTitle(types[MathUtils.random(0, 1)]));
     }
 
     public void update(float dt) {

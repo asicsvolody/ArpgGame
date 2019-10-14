@@ -1,4 +1,4 @@
-package com.arpg.game;
+package com.arpg.game.utils;
 
 import com.arpg.game.utils.Poolable;
 import com.badlogic.gdx.graphics.Color;

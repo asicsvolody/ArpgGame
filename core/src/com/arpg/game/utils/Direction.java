@@ -1,4 +1,4 @@
-package com.arpg.game;
+package com.arpg.game.utils;
 
 public enum Direction {
     UP(0, 1, 90.0f, 2), DOWN(0, -1, 270.0f, 3), LEFT(-1, 0, 180.0f, 0), RIGHT(1, 0, 0.0f, 1);
@@ -31,4 +31,3 @@ public enum Direction {
         this.imageIndex = imageIndex;
     }
 }
-

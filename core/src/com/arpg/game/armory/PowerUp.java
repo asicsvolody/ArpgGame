@@ -1,10 +1,4 @@
-/**
- * Created by IntelliJ Idea.
- * User: Якимов В.Н.
- * E-mail: yakimovvn@bk.ru
- */
-
-package com.arpg.game;
+package com.arpg.game.armory;
 
 import com.arpg.game.utils.Poolable;
 import com.badlogic.gdx.graphics.Color;
@@ -13,7 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 
 public class PowerUp implements Poolable {
     public enum Type {
-        COINS(0), MEDKIT(1), WEAPON(2);
+        POTION(0), COINS(1), WEAPON(2), ARMOR(3);
 
         int index;
 

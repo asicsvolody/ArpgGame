@@ -1,4 +1,4 @@
-package com.arpg.game;
+package com.arpg.game.units;
 
 public class Stats {
     private int level;
