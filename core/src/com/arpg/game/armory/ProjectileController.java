@@ -17,7 +17,7 @@ public class ProjectileController extends ObjectPool<Projectile> {
         checkPool();
     }
 
-    public void setup(Unit unit, float x, float y, float speed, int type, float maxRange, float angle) {
-        getActiveElement().setup(unit, x, y, (float)Math.cos(Math.toRadians(angle)), (float)Math.sin(Math.toRadians(angle)), speed, type, maxRange, angle);
+    public void setup(Unit unit, float x, float y, float speed, int type, float maxRange, float angle, int damage) {
+        getActiveElement().setup(unit, x, y, (float)Math.cos(Math.toRadians(angle)), (float)Math.sin(Math.toRadians(angle)), speed, type, maxRange, angle, damage);
     }
 }

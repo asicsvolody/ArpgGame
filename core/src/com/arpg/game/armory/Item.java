@@ -9,4 +9,5 @@ public interface Item {
     String getTitle();
     boolean isUsable();
     boolean isWearable();
+    boolean isStackable();
 }

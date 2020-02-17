@@ -39,9 +39,14 @@ public class Assets {
                 assetManager.load("images/game.pack", TextureAtlas.class);
                 createStandardFont(24);
                 break;
+            case GAME_OVER:
+                assetManager.load("images/game.pack", TextureAtlas.class);
+                createStandardFont(24);
+                break;
             case GAME:
                 assetManager.load("images/game.pack", TextureAtlas.class);
                 createStandardFont(20);
+                createStandardFont(14);
                 break;
         }
     }
@@ -56,9 +61,9 @@ public class Assets {
         fontParameter.fontParameters.color = Color.WHITE;
         fontParameter.fontParameters.borderWidth = 1;
         fontParameter.fontParameters.borderColor = Color.BLACK;
-        fontParameter.fontParameters.shadowOffsetX = 1;
-        fontParameter.fontParameters.shadowOffsetY = 1;
-        fontParameter.fontParameters.shadowColor = Color.BLACK;
+//        fontParameter.fontParameters.shadowOffsetX = 1;
+//        fontParameter.fontParameters.shadowOffsetY = 1;
+//        fontParameter.fontParameters.shadowColor = Color.BLACK;
         assetManager.load("fonts/font" + size + ".ttf", BitmapFont.class, fontParameter);
     }
 

@@ -3,8 +3,7 @@ package com.arpg.game.units;
 import com.arpg.game.units.Unit;
 
 public class BattleCalc {
-    public static int calculateDamage(Unit attacker, Unit target) {
-        int baseDamage = attacker.getWeapon().getDamage();
+    public static int calculateDamage(Unit attacker, Unit target, int baseDamage) {
         int diffAD = attacker.getStats().getAtt() - target.getStats().getDef();
         int diffLevel = attacker.getStats().getLevel() - target.getStats().getLevel();
         int outDamage = (int) (baseDamage * (1 + diffAD * 0.05f) * (1 + diffLevel * 0.1f));
@@ -24,3 +23,4 @@ public class BattleCalc {
         return exp;
     }
 }
+

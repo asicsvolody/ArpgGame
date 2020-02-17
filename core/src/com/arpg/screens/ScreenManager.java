@@ -1,6 +1,7 @@
 package com.arpg.screens;
 
 import com.arpg.ArpgGame;
+import com.arpg.game.units.Hero;
 import com.arpg.utils.Assets;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Camera;
@@ -10,7 +11,7 @@ import com.badlogic.gdx.utils.viewport.*;
 
 public class ScreenManager {
     public enum ScreenType {
-        MENU, GAME
+        MENU, GAME, GAME_OVER
     }
 
     public static final int WORLD_WIDTH = 1280;
@@ -22,6 +23,7 @@ public class ScreenManager {
     private SpriteBatch batch;
     private LoadingScreen loadingScreen;
     private GameScreen gameScreen;
+    private GameOverScreen gameOverScreen;
     private MenuScreen menuScreen;
     private Screen targetScreen;
     private Viewport viewport;
@@ -50,6 +52,7 @@ public class ScreenManager {
         this.camera = new OrthographicCamera(WORLD_WIDTH, WORLD_HEIGHT);
         this.viewport = new FitViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
         this.gameScreen = new GameScreen(batch);
+        this.gameOverScreen = new GameOverScreen(batch);
         this.menuScreen = new MenuScreen(batch);
         this.loadingScreen = new LoadingScreen(batch);
     }
@@ -65,7 +68,7 @@ public class ScreenManager {
         batch.setProjectionMatrix(camera.combined);
     }
 
-    public void changeScreen(ScreenType type) {
+    public void changeScreen(ScreenType type, Object... args) {
         Screen screen = game.getScreen();
         Assets.getInstance().clear();
         if (screen != null) {
@@ -81,6 +84,11 @@ public class ScreenManager {
             case MENU:
                 targetScreen = menuScreen;
                 Assets.getInstance().loadAssets(ScreenType.MENU);
+                break;
+            case GAME_OVER:
+                targetScreen = gameOverScreen;
+                gameOverScreen.setResults((Hero)args[0]);
+                Assets.getInstance().loadAssets(ScreenType.GAME_OVER);
                 break;
         }
     }

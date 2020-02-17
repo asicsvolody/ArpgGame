@@ -57,6 +57,20 @@ public abstract class Unit implements MapElement {
         return area;
     }
 
+    public boolean isAlive() {
+        return stats.getHp() > 0;
+    }
+
+    public void changePosition(Vector2 point) {
+        position.set(point);
+        area.setPosition(position);
+    }
+
+    public void changePosition(float x, float y) {
+        position.set(x, y);
+        area.setPosition(position);
+    }
+
     public Unit(GameController gameController) {
         this.gc = gameController;
         this.hpTexture = Assets.getInstance().getAtlas().findRegion("monsterHp");
@@ -86,18 +100,16 @@ public abstract class Unit implements MapElement {
         return texture[direction.getImageIndex()][(int) (walkTimer / timePerFrame) % texture[direction.getImageIndex()].length];
     }
 
-    public void render(SpriteBatch batch, BitmapFont font) {
-        if (damageTimer > 0.0f) {
-            batch.setColor(1.0f, 1.0f - damageTimer, 1.0f - damageTimer, 1.0f);
+    public void moveForward(float dt, float mod) {
+        tmp.set(position);
+        tmp.add(stats.getSpeed() * mod * dt * direction.getX(), stats.getSpeed() * mod * dt * direction.getY());
+        walkTimer += dt * mod;
+        if (gc.getMap().isCellPassable(tmp)) {
+            changePosition(tmp);
         }
-        batch.draw(getCurrentTexture(), position.x - 40, position.y - 20);
-        if (stats.getHp() < stats.getHpMax()) {
-            batch.setColor(1.0f, 1.0f, 1.0f, 0.9f);
-            batch.draw(hpTexture, position.x - 40, position.y + 40, 80 * ((float) stats.getHp() / stats.getHpMax()), 12);
-        }
-        batch.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-        font.draw(batch, "" + stats.getLevel(), position.x, position.y + 50);
     }
+
+    public abstract void render(SpriteBatch batch, BitmapFont font);
 
     public abstract void update(float dt);
 }

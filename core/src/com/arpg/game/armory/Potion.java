@@ -33,6 +33,11 @@ public class Potion implements Item {
         return false;
     }
 
+    @Override
+    public boolean isStackable() {
+        return true;
+    }
+
     public int getPower() {
         return power;
     }

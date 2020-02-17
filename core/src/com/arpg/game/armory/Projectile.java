@@ -15,6 +15,7 @@ public class Projectile implements Poolable, MapElement {
     private Vector2 position;
     private Vector2 dir;
     private float range;
+    private int damage;
     private float maxRange;
     private float speed;
     private float angle;
@@ -48,6 +49,10 @@ public class Projectile implements Poolable, MapElement {
         return angle;
     }
 
+    public int getDamage() {
+        return damage;
+    }
+
     public int getType() {
         return type;
     }
@@ -62,7 +67,7 @@ public class Projectile implements Poolable, MapElement {
         active = false;
     }
 
-    public void setup(Unit unit, float x, float y, float vx, float vy, float speed, int type, float maxRange, float angle) {
+    public void setup(Unit unit, float x, float y, float vx, float vy, float speed, int type, float maxRange, float angle, int damage) {
         this.unit = unit;
         this.position.set(x, y);
         this.dir.set(vx, vy);
@@ -71,6 +76,7 @@ public class Projectile implements Poolable, MapElement {
         this.maxRange = maxRange;
         this.range = 0.0f;
         this.angle = angle;
+        this.damage = damage;
         this.active = true;
     }
 

@@ -22,6 +22,8 @@ public class Map {
     private TextureRegion[] textureWall;
     private TextureRegion textureGrass;
 
+    private int outX, outY;
+
     public Map() {
         this.data = new BlockType[MAP_SIZE_X][MAP_SIZE_Y];
         this.treeType = new int[MAP_SIZE_X][MAP_SIZE_Y];
@@ -37,6 +39,11 @@ public class Map {
                 }
             }
         }
+
+        do {
+            outX = MathUtils.random(0, MAP_SIZE_X - 1);
+            outY = MathUtils.random(0, MAP_SIZE_Y - 1);
+        } while (data[outX][outY] != BlockType.EMPTY);
     }
 
     public void setRefVectorToEmptyPoint(Vector2 refInput) {
@@ -47,6 +54,15 @@ public class Map {
 
     public void renderGround(SpriteBatch batch, int x, int y) {
         batch.draw(textureGrass, x * 80, y * 80);
+        if (x == outX && y == outY) {
+            batch.setColor(1, 0, 0, 1);
+            batch.draw(textureGrass, x * 80, y * 80);
+            batch.setColor(1, 1, 1, 1);
+        }
+    }
+
+    public boolean isOut(Vector2 position) {
+        return (int)(position.x / 80) == outX && (int)(position.y / 80) == outY;
     }
 
     public void renderWalls(SpriteBatch batch, int x, int y) {
@@ -67,6 +83,18 @@ public class Map {
     }
 
     public boolean isCellPassable(Vector2 position) {
+        if (position.x < 0.0f || position.y < 0.0f || position.x >= MAP_SIZE_X_PX || position.y >= MAP_SIZE_Y_PX) {
+            return false;
+        }
+        int cellX = (int) (position.x / 80);
+        int cellY = (int) (position.y / 80);
+        if (cellX < 0 || cellX >= MAP_SIZE_X || cellY < 0 || cellY >= MAP_SIZE_Y) {
+            return false;
+        }
+        return data[cellX][cellY] == BlockType.EMPTY;
+    }
+
+    public boolean isCellPassableForProjectiles(Vector2 position) {
         if (position.x < 0.0f || position.y < 0.0f || position.x >= MAP_SIZE_X_PX || position.y >= MAP_SIZE_Y_PX) {
             return false;
         }

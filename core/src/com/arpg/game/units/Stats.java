@@ -19,7 +19,7 @@ public class Stats {
 
     private int hp;
     private int exp;
-    private int[] expTo = {1_000, 2_000, 4_000, 8_000, 16_000, 32_000, 80_000, 150_000, 200_000, 400_000};
+    private int[] expTo = {1_000, 2_000, 4_000, 8_000, 16_000, 32_000, 80_000, 150_000, 200_000, 400_000, 800_000, 1_600_000, 3_200_000};
 
     public int getAtt() {
         return att;

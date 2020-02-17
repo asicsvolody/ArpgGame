@@ -38,6 +38,11 @@ public class Weapon implements Item {
         return true;
     }
 
+    @Override
+    public boolean isStackable() {
+        return false;
+    }
+
     public float getAttackRange() {
         return attackRange;
     }

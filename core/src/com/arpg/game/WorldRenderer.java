@@ -29,6 +29,7 @@ import java.util.List;
 public class WorldRenderer {
     private GameController gc;
     private SpriteBatch batch;
+    private BitmapFont font14;
     private BitmapFont font20;
     private Camera camera;
     private Vector2 pov;
@@ -41,6 +42,7 @@ public class WorldRenderer {
 
     public WorldRenderer(GameController gameController, SpriteBatch batch) {
         this.gc = gameController;
+        this.font14 = Assets.getInstance().getAssetManager().get("fonts/font14.ttf");
         this.font20 = Assets.getInstance().getAssetManager().get("fonts/font20.ttf");
         this.batch = batch;
         this.camera = ScreenManager.getInstance().getCamera();
@@ -145,7 +147,7 @@ public class WorldRenderer {
         for (int y = top - 1; y >= bottom; y--) {
             for (int x = left; x < right; x++) {
                 for (int i = 0; i < drawables[y - bottom].size(); i++) {
-                    drawables[y - bottom].get(i).render(batch, font20);
+                    drawables[y - bottom].get(i).render(batch, font14);
                 }
             }
             for (int x = left; x < right; x++) {
@@ -153,6 +155,7 @@ public class WorldRenderer {
             }
         }
         gc.getEffectController().render(batch);
+        gc.getPowerUpsController().render(batch);
         gc.getInfoController().render(batch, font20);
         batch.end();
         frameBuffer.end();
@@ -176,6 +179,7 @@ public class WorldRenderer {
 
         batch.begin();
         gc.getHero().renderHUD(batch, font20);
+        font20.draw(batch, "Game Level: " + gc.getGameLevel() + "   Game Time: " + (int) gc.getGameTimer(), 0, 700, 1280, 1, false);
         batch.end();
         gc.getStage().draw();
     }

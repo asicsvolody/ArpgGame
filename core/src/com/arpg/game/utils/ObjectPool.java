@@ -18,16 +18,8 @@ public abstract class ObjectPool<T extends Poolable> {
     }
 
     public ObjectPool() {
-        this.activeList = new ArrayList<>();
-        this.freeList = new ArrayList<>();
-    }
-
-    public ObjectPool(int size) {
-        this.activeList = new ArrayList<>();
-        this.freeList = new ArrayList<>();
-        for (int i = 0; i < size; i++) {
-            freeList.add(newObject());
-        }
+        this.activeList = new ArrayList<T>();
+        this.freeList = new ArrayList<T>();
     }
 
     public T getActiveElement() {
@@ -37,6 +29,12 @@ public abstract class ObjectPool<T extends Poolable> {
         T temp = freeList.remove(freeList.size() - 1);
         activeList.add(temp);
         return temp;
+    }
+
+    public void freeAll() {
+        for (int i = activeList.size() - 1; i >= 0; i--) {
+            free(i);
+        }
     }
 
     public void checkPool() {

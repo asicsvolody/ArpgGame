@@ -8,14 +8,12 @@ package com.arpg.game;
 
 import com.arpg.game.armory.*;
 import com.arpg.game.map.Map;
-import com.arpg.game.units.Hero;
-import com.arpg.game.units.Monster;
-import com.arpg.game.units.MonsterController;
-import com.arpg.game.units.Unit;
+import com.arpg.game.units.*;
 import com.arpg.game.utils.EffectController;
 import com.arpg.game.utils.InfoController;
 import com.arpg.screens.ScreenManager;
 import com.arpg.utils.Assets;
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -41,6 +39,7 @@ public class GameController {
     private Vector2 mouse;
     private Vector2 tmp;
     private int gameLevel;
+    private float gameTimer;
     private float gameLevelTimer;
     private Stage stage;
     private boolean paused;
@@ -84,6 +83,14 @@ public class GameController {
         return hero;
     }
 
+    public int getGameLevel() {
+        return gameLevel;
+    }
+
+    public float getGameTimer() {
+        return gameTimer;
+    }
+
     public GameController(SpriteBatch batch) {
         this.map = new Map();
         this.hero = new Hero(this);
@@ -104,6 +111,7 @@ public class GameController {
 
     public void gameUpdate(float dt) {
         gameLevelTimer += dt;
+        gameTimer += dt;
         if (gameLevelTimer > LEVEL_DURATION) {
             gameLevelTimer = 0.0f;
             gameLevel++;
@@ -116,11 +124,26 @@ public class GameController {
 
     public void update(float dt) {
         if (!paused) {
+            if (map.isOut(hero.getPosition())) {
+                monsterController.freeAll();
+                infoController.freeAll();
+                projectileController.freeAll();
+                powerUpsController.freeAll();
+                map = new Map();
+                gameLevel += 3;
+                for (int i = 0; i < 5; i++) {
+                    monsterController.setup(MathUtils.random(gameLevel, gameLevel + 2));
+                }
+                hero.setSafePosition();
+            }
+
             gameUpdate(dt);
             mouse.set(Gdx.input.getX(), Gdx.input.getY());
             ScreenManager.getInstance().getViewport().unproject(mouse);
             if (hero.isActive()) {
                 hero.update(dt);
+            } else {
+                ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.GAME_OVER, hero);
             }
             monsterController.update(dt);
 
@@ -138,6 +161,12 @@ public class GameController {
 
             for (int i = 0; i < projectileController.getActiveList().size(); i++) {
                 Projectile p = projectileController.getActiveList().get(i);
+
+                if (!map.isCellPassableForProjectiles(p.getPosition())) {
+                    p.deactivate();
+                    continue;
+                }
+
                 for (int j = 0; j < monsterController.getActiveList().size(); j++) {
                     Monster m = monsterController.getActiveList().get(j);
                     if (p.getUnit() == m) {
@@ -145,13 +174,13 @@ public class GameController {
                     }
                     if (m.getArea().contains(p.getPosition())) {
                         p.deactivate();
-                        m.takeDamage(p.getUnit(), 1, Color.WHITE);
+                        m.takeDamage(p.getUnit(), BattleCalc.calculateDamage(p.getUnit(), m, p.getDamage()), Color.WHITE);
                     }
                 }
                 if (p.getUnit() != hero) {
                     if (hero.getArea().contains(p.getPosition())) {
                         p.deactivate();
-                        hero.takeDamage(p.getUnit(), 1, Color.WHITE);
+                        hero.takeDamage(p.getUnit(), BattleCalc.calculateDamage(p.getUnit(), hero, p.getDamage()), Color.WHITE);
                     }
                 }
             }
@@ -213,6 +242,7 @@ public class GameController {
         menuGroup.addActor(btnToMenu);
         btnPauseGame.setPosition(0, 0);
         btnToMenu.setPosition(140, 0);
+
         btnPauseGame.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -225,6 +255,33 @@ public class GameController {
                 ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.MENU);
             }
         });
+
+        if (Gdx.app.getType() == Application.ApplicationType.Android) {
+            Group controlGroup = new Group();
+            Button buttonLeft = new TextButton("L", skin, "smallButtonStyle");
+            Button buttonRight = new TextButton("R", skin, "smallButtonStyle");
+            buttonLeft.setPosition(0, 0);
+            buttonRight.setPosition(140, 0);
+            controlGroup.addActor(buttonLeft);
+            controlGroup.addActor(buttonRight);
+
+            buttonLeft.addListener(new ChangeListener() {
+                @Override
+                public void changed(ChangeEvent event, Actor actor) {
+                    hero.getPosition().add(-10, 0);
+                }
+            });
+            buttonRight.addListener(new ChangeListener() {
+                @Override
+                public void changed(ChangeEvent event, Actor actor) {
+                    hero.getPosition().add(10, 0);
+                }
+            });
+
+            controlGroup.setPosition(100, 100);
+            stage.addActor(controlGroup);
+        }
+
         menuGroup.setPosition(980, 660);
         stage.addActor(menuGroup);
         skin.dispose();

@@ -7,17 +7,30 @@
 package com.arpg.game.armory;
 
 import com.arpg.game.units.Hero;
-
-import com.arpg.game.units.Hero;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import java.awt.event.ItemEvent;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Inventory {
+    public class InventoryEntry {
+        private Item item;
+        private int quantity;
+
+        public Item getItem() {
+            return item;
+        }
+
+        public InventoryEntry(Item item, int quantity) {
+            this.item = item;
+            this.quantity = quantity;
+        }
+    }
+
     private Hero hero;
-    private List<Item> items;
+    private List<InventoryEntry> items;
     private int coins;
     private int selected;
 
@@ -36,6 +49,14 @@ public class Inventory {
         }
     }
 
+    public boolean removeCoints(int coins){
+        if(this.coins >= coins){
+            this.coins -= coins;
+            return true;
+        }
+        return false;
+    }
+
     public void selectNext() {
         selected++;
         if (selected >= items.size()) {
@@ -43,24 +64,31 @@ public class Inventory {
         }
     }
 
-    public Item getCurrentItem() {
+    public InventoryEntry getCurrentInventoryEntry() {
         return items.get(selected);
     }
 
     public void destroyCurrentItem() {
-        items.remove(selected);
+        if (!items.get(selected).item.isStackable()) {
+            items.remove(selected);
+        } else {
+            items.get(selected).quantity--;
+            if (items.get(selected).quantity <= 0) {
+                items.remove(selected);
+            }
+        }
         if (selected >= items.size()) {
             selected = 0;
         }
     }
 
     public void takeCurrentWeapon() {
-        if (!(getCurrentItem() instanceof Weapon)) {
+        if (!(getCurrentInventoryEntry().item instanceof Weapon)) {
             return;
         }
         Weapon tmp = hero.getWeapon();
-        hero.setWeapon((Weapon) getCurrentItem());
-        items.set(selected, tmp);
+        hero.setWeapon((Weapon) getCurrentInventoryEntry().item);
+        items.get(selected).item = tmp;
     }
 
     public Inventory(Hero hero) {
@@ -74,12 +102,22 @@ public class Inventory {
             if (i == selected) {
                 builder.append("> ");
             }
-            builder.append(items.get(i).getTitle()).append("\n");
+            builder.append(items.get(i).item.getTitle()).append("...").append(items.get(i).quantity).append("\n");
         }
         font.draw(batch, builder, 1000, 700);
     }
 
     public void add(Item item) {
-        items.add(item);
+        if (!item.isStackable()) {
+            items.add(new InventoryEntry(item, 1));
+        } else {
+            for (int i = 0; i < items.size(); i++) {
+                if (items.get(i).item.getTitle().equals(item.getTitle())) {
+                    items.get(i).quantity++;
+                    return;
+                }
+            }
+            items.add(new InventoryEntry(item, 1));
+        }
     }
 }
